@@ -6,7 +6,7 @@ function UserHeader({ firstName, lastName }) {
       <h1>
         Welcome back
         <br />
-        {firstName} {lastName}!
+        {firstName} {lastName} !
       </h1>
       <button className="edit-button">Edit Name</button>
     </div>

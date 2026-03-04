@@ -1,10 +1,49 @@
 import "./user.scss";
+import { useEffect, useState } from "react";
+import ApiService from "../../services/apiServices";
 import UserHeader from "../../components/userHeader/userHeader";
 
 function User() {
+  const [user, setUser] = useState(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchProfile = async () => {
+      const token = localStorage.getItem("token");
+
+      if (!token) {
+        console.log("No token found");
+        setLoading(false);
+        return;
+      }
+
+      try {
+        const profile = await ApiService.getProfile(token);
+        setUser(profile);
+      } catch (error) {
+        console.error("Profile error:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchProfile();
+  }, []);
+
+  if (loading) {
+    return (
+      <main className="main bg-dark">
+        <h1 style={{ color: "white", textAlign: "center" }}>Loading...</h1>
+      </main>
+    );
+  }
+
   return (
     <main className="main bg-dark">
-      <UserHeader firstName="Tony" lastName="Jarvis" />
+      <UserHeader
+        firstName={user?.firstName || "Tony"}
+        lastName={user?.lastName || "Jarvis"}
+      />
 
       <h2 className="sr-only">Accounts</h2>
 

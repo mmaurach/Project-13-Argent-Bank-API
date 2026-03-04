@@ -1,6 +1,7 @@
 import "./signIn.scss";
 import { useNavigate } from "react-router-dom";
 import { useState } from "react";
+import ApiService from "../../services/apiServices";
 
 function SignIn() {
   const navigate = useNavigate();
@@ -8,14 +9,23 @@ function SignIn() {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
 
-    // Pour l’instant on simule la connexion
-    if (username && password) {
-      navigate("/user");
-    } else {
+    if (!username || !password) {
       alert("Please enter username and password");
+      return;
+    }
+
+    try {
+      const token = await ApiService.login(username, password);
+
+      localStorage.setItem("token", token);
+
+      navigate("/user");
+    } catch (error) {
+      console.error(error);
+      alert("Invalid credentials");
     }
   };
 
@@ -27,7 +37,7 @@ function SignIn() {
 
         <form onSubmit={handleSubmit}>
           <div className="input-wrapper">
-            <label htmlFor="username">Username</label>
+            <label htmlFor="username">Email</label>
             <input
               type="text"
               id="username"
