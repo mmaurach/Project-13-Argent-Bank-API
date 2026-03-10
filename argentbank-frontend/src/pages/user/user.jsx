@@ -1,16 +1,22 @@
 import "./user.scss";
 import { useEffect, useState } from "react";
+import { useSelector, useDispatch } from "react-redux";
+
 import ApiService from "../../services/apiServices";
+import { setUser } from "../../store/userSlice";
+
 import UserHeader from "../../components/userHeader/userHeader";
 
 function User() {
-  const [user, setUser] = useState(null);
+  const dispatch = useDispatch();
+
+  const token = useSelector((state) => state.user.token);
+  const user = useSelector((state) => state.user.user);
+
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const fetchProfile = async () => {
-      const token = localStorage.getItem("token");
-
       if (!token) {
         console.log("No token found");
         setLoading(false);
@@ -19,7 +25,9 @@ function User() {
 
       try {
         const profile = await ApiService.getProfile(token);
-        setUser(profile);
+
+        // stockage dans Redux
+        dispatch(setUser(profile));
       } catch (error) {
         console.error("Profile error:", error);
       } finally {
@@ -28,7 +36,7 @@ function User() {
     };
 
     fetchProfile();
-  }, []);
+  }, [token, dispatch]);
 
   if (loading) {
     return (
@@ -40,10 +48,7 @@ function User() {
 
   return (
     <main className="main bg-dark">
-      <UserHeader
-        firstName={user?.firstName || "Tony"}
-        lastName={user?.lastName || "Jarvis"}
-      />
+      <UserHeader firstName={user?.firstName} lastName={user?.lastName} />
 
       <h2 className="sr-only">Accounts</h2>
 

@@ -1,7 +1,10 @@
 import React from "react";
 import ReactDOM from "react-dom/client";
-import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { Provider } from "react-redux";
+
 import "../src/index.scss";
+import { store } from "./store/store";
 
 import Home from "./pages/home/home";
 import Header from "./components/header/header";
@@ -10,13 +13,15 @@ import SignIn from "./pages/signIn/signIn";
 import User from "./pages/user/user";
 
 ReactDOM.createRoot(document.getElementById("root")).render(
-  <Router>
-    <Header />
-    <Routes>
-      <Route path="/" element={<Home />} />
-      <Route path="/signin" element={<SignIn />} />
-      <Route path="/user" element={<User />} />
-    </Routes>
-    <Footer />
-  </Router>,
+  <Provider store={store}>
+    <BrowserRouter>
+      <Header />
+      <Routes>
+        <Route path="/" element={<Home />} />
+        <Route path="/signin" element={<SignIn />} />
+        <Route path="/user" element={<User />} />
+      </Routes>
+      <Footer />
+    </BrowserRouter>
+  </Provider>,
 );

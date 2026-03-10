@@ -1,10 +1,14 @@
 import "./signIn.scss";
 import { useNavigate } from "react-router-dom";
 import { useState } from "react";
+import { useDispatch } from "react-redux";
+
 import ApiService from "../../services/apiServices";
+import { setToken } from "../../store/userSlice";
 
 function SignIn() {
   const navigate = useNavigate();
+  const dispatch = useDispatch();
 
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
@@ -20,7 +24,8 @@ function SignIn() {
     try {
       const token = await ApiService.login(username, password);
 
-      localStorage.setItem("token", token);
+      // stockage dans Redux
+      dispatch(setToken(token));
 
       navigate("/user");
     } catch (error) {
