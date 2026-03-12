@@ -10,7 +10,10 @@ import UserHeader from "../../components/userHeader/userHeader";
 function User() {
   const dispatch = useDispatch();
 
-  const token = useSelector((state) => state.user.token);
+  const token =
+    useSelector((state) => state.user.token) ||
+    localStorage.getItem("token") ||
+    sessionStorage.getItem("token");
   const user = useSelector((state) => state.user.user);
 
   const [loading, setLoading] = useState(true);

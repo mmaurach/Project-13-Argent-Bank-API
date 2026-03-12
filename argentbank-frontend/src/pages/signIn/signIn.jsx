@@ -12,6 +12,7 @@ function SignIn() {
 
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
+  const [rememberMe, setRememberMe] = useState(false);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -24,8 +25,17 @@ function SignIn() {
     try {
       const token = await ApiService.login(username, password);
 
-      // stockage dans Redux
       dispatch(setToken(token));
+
+      // Nettoyage des anciens tokens
+      localStorage.removeItem("token");
+      sessionStorage.removeItem("token");
+
+      if (rememberMe) {
+        localStorage.setItem("token", token);
+      } else {
+        sessionStorage.setItem("token", token);
+      }
 
       navigate("/user");
     } catch (error) {
@@ -62,7 +72,12 @@ function SignIn() {
           </div>
 
           <div className="input-remember">
-            <input type="checkbox" id="remember-me" />
+            <input
+              type="checkbox"
+              id="remember-me"
+              checked={rememberMe}
+              onChange={(e) => setRememberMe(e.target.checked)}
+            />
             <label htmlFor="remember-me">Remember me</label>
           </div>
 
