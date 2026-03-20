@@ -1,11 +1,43 @@
-import { NavLink, useLocation } from "react-router-dom";
+import { NavLink } from "react-router-dom";
+import { useSelector, useDispatch } from "react-redux";
+import { useEffect } from "react";
+
+import { logout, setUser } from "../../store/userSlice";
+import ApiService from "../../services/apiServices";
+
 import logo from "../../assets/argentBankLogo.png";
 import "./header.scss";
 
 function Header() {
-  const location = useLocation();
+  const dispatch = useDispatch();
 
-  const isLoggedIn = location.pathname === "/user";
+  const token = useSelector((state) => state.user.token);
+  const user = useSelector((state) => state.user.user);
+
+  const isLoggedIn = !!token;
+
+  // Récupération du profil si token présent
+  useEffect(() => {
+    const fetchProfile = async () => {
+      if (token && !user) {
+        try {
+          const profile = await ApiService.getProfile(token);
+          dispatch(setUser(profile));
+        } catch (error) {
+          console.error("Error fetching profile:", error);
+        }
+      }
+    };
+
+    fetchProfile();
+  }, [token, user, dispatch]);
+
+  // Logout
+  const handleLogout = () => {
+    localStorage.removeItem("token");
+    sessionStorage.removeItem("token");
+    dispatch(logout());
+  };
 
   return (
     <nav className="main-nav">
@@ -23,10 +55,10 @@ function Header() {
           <>
             <NavLink to="/user" className="main-nav-item">
               <i className="fa fa-user-circle"></i>
-              Tony
+              {user?.firstName || "User"}
             </NavLink>
 
-            <NavLink to="/" className="main-nav-item">
+            <NavLink to="/" className="main-nav-item" onClick={handleLogout}>
               <i className="fa fa-sign-out"></i>
               Sign Out
             </NavLink>

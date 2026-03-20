@@ -3,14 +3,22 @@ import ReactDOM from "react-dom/client";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { Provider } from "react-redux";
 
-import "../src/index.scss";
 import { store } from "./store/store";
+import { setToken } from "./store/userSlice";
+
+import "../src/index.scss";
 
 import Home from "./pages/home/home";
 import Header from "./components/header/header";
 import Footer from "./components/footer/footer";
 import SignIn from "./pages/signIn/signIn";
 import User from "./pages/user/user";
+
+const token = localStorage.getItem("token") || sessionStorage.getItem("token");
+
+if (token) {
+  store.dispatch(setToken(token));
+}
 
 ReactDOM.createRoot(document.getElementById("root")).render(
   <Provider store={store}>
