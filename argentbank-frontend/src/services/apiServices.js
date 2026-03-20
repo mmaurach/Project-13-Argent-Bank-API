@@ -36,6 +36,22 @@ const ApiService = {
     const data = await response.json();
     return data.body;
   },
+  async updateProfile(token, firstName, lastName) {
+    const response = await fetch("http://localhost:3001/api/v1/user/profile", {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify({
+        firstName,
+        lastName,
+      }),
+    });
+
+    const data = await response.json();
+    return data.body;
+  },
 };
 
 export default ApiService;
