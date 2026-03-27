@@ -13,6 +13,7 @@ import Header from "./components/header/header";
 import Footer from "./components/footer/footer";
 import SignIn from "./pages/signIn/signIn";
 import User from "./pages/user/user";
+import ProtectedRoute from "./components/protectedRoute/protectedRoute";
 
 const token = localStorage.getItem("token") || sessionStorage.getItem("token");
 
@@ -27,7 +28,14 @@ ReactDOM.createRoot(document.getElementById("root")).render(
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/signin" element={<SignIn />} />
-        <Route path="/user" element={<User />} />
+        <Route
+          path="/user"
+          element={
+            <ProtectedRoute>
+              <User />
+            </ProtectedRoute>
+          }
+        />
       </Routes>
       <Footer />
     </BrowserRouter>
