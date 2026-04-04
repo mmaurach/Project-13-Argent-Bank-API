@@ -1,0 +1,187 @@
+openapi: 3.0.0
+info:
+  title: Argent Bank Transactions API
+  description: API documentation for managing user accounts and transactions
+  version: 1.0.0
+
+servers:
+  - url: http://localhost:3001/api/v1
+
+paths:
+  /accounts:
+    get:
+      tags:
+        - Account
+      summary: List user's accounts
+      description: Retrieve all accounts belonging to the authenticated user
+      security:
+        - bearerAuth: []
+      responses:
+        "200":
+          description: Accounts retrieved
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Account"
+        "401":
+          description: Invalid or expired token
+        "404":
+          description: No accounts found
+        "500":
+          description: Server error
+
+  /transactions/{accountId}:
+    get:
+      tags:
+        - Transactions
+      summary: List transactions
+      description: Retrieve all transactions for the current month for a specific account
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: accountId
+          in: path
+          required: true
+          description: ID of the account
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Transactions retrieved
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Transaction"
+        "401":
+          description: Invalid or expired token
+        "404":
+          description: No transactions found
+        "500":
+          description: Server error
+
+  /transactions/transaction/{transactionId}:
+    get:
+      tags:
+        - Transactions
+      summary: Get transaction details
+      description: Retrieve detailed information for a specific transaction
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: transactionId
+          in: path
+          required: true
+          description: ID of the transaction
+          schema:
+            type: string
+
+      responses:
+        "200":
+          description: Transaction details retrieved
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Transaction"
+        "401":
+          description: Invalid or expired token
+        "404":
+          description: Transaction not found
+        "500":
+          description: Server error
+
+    patch:
+      tags:
+        - Transactions
+      summary: Update transaction information
+      description: Add, modify or delete additional information of a transaction such as category or notes
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: transactionId
+          in: path
+          required: true
+          description: ID of the transaction
+          schema:
+            type: string
+
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                category:
+                  type: string
+                  example: Food
+                notes:
+                  type: string
+                  example: Weekly groceries
+
+      responses:
+        "200":
+          description: Transaction updated successfully
+        "400":
+          description: Invalid request data
+        "401":
+          description: Invalid or expired token
+        "403":
+          description: Unauthorized
+        "404":
+          description: Transaction not found
+        "500":
+          description: Server error
+
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+
+  schemas:
+    Account:
+      type: object
+      properties:
+        id:
+          type: string
+          example: x8349
+        name:
+          type: string
+          example: Argent Bank Checking
+        balance:
+          type: number
+          example: 2082.79
+
+    Transaction:
+      type: object
+      properties:
+        id:
+          type: string
+          example: txn001
+        date:
+          type: string
+          format: date
+          example: 2026-03-10
+        description:
+          type: string
+          example: Grocery Store
+        amount:
+          type: number
+          example: -50.25
+        balance:
+          type: number
+          example: 2000.54
+        type:
+          type: string
+          example: debit
+        category:
+          type: string
+          example: Food
+        notes:
+          type: string
+          example: Weekly groceries
